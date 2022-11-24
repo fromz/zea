@@ -1,0 +1,39 @@
+camunda-platform:
+  global:
+    elasticsearch:
+      disableExporter: true
+
+  zeebe:
+    clusterSize: 1
+    partitionCount: 1
+    replicationFactor: 1
+    pvcSize: 10Gi
+    extraInitContainers:
+      - name: init-exporters-nats
+        image: busybox:1.35
+        command: ['/bin/sh', '-c']
+        args: ['wget --no-check-certificate https://github.com/fromz/zea/archive/refs/tags/0.1.0-ALPHA-1.zip -O /exporters/zeebe-nats-exporter.jar; ls -al /exporters']
+        volumeMounts:
+        - name: exporters
+          mountPath: /exporters/
+    env:
+      - name: ZEEBE_LOG_LEVEL
+        value: "debug"
+      - name: NATS_EXPORTER_URL
+        value: "zeebe-platform-nats:4222"
+      - name: NATS_EXPORTER_STREAM_NAME
+        value: "zeebe_events"
+      - name: NATS_EXPORTER_BATCH_SIZE
+        value: "10"
+      - name: BATCH_TIME_MILLI
+        value: "200"
+
+  zeebe-gateway:
+    replicas: 1
+    service:
+      type: NodePort
+
+nats:
+  image: nats:2.7.4-alpine
+  pullPolicy: IfNotPresent
+  externalAccess: true

@@ -1,0 +1,24 @@
+camunda-platform:
+  global:
+    identity:
+      auth:
+        enabled: false
+
+  elasticsearch:
+    enabled: false
+
+  # Disable identity as part of the camunda platform core
+  identity:
+    enabled: false
+
+  # Disable optimise as part of the camunda platform core
+  optimize:
+    enabled: false
+
+  # Disable task list as part of the camunda platform core
+  tasklist:
+    enabled: false
+
+  # Disable operate as part of the camunda platform core
+  operate:
+    enabled: false
