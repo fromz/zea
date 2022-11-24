@@ -1,0 +1,9 @@
+dependencies:
+- name: camunda-platform
+  repository: https://helm.camunda.io/
+  version: 8.1.0
+- name: nats
+  repository: https://nats-io.github.io/k8s/helm/charts/
+  version: 0.18.3
+digest: sha256:b3bc6c4a605ebd07b81c32aa2b2e3786d7dd6a6c237cf1afde1ea0182238fc13
+generated: "2022-11-24T15:11:37.967807723+10:00"

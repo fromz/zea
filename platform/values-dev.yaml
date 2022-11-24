@@ -1,0 +1,35 @@
+camunda-platform:
+  global:
+    elasticsearch:
+      disableExporter: true
+
+  zeebe:
+    clusterSize: 1
+    partitionCount: 1
+    replicationFactor: 1
+    pvcSize: 10Gi
+    extraInitContainers:
+      - name: init-exporters-nats
+        image: busybox:1.35
+        command: ['/bin/sh', '-c']
+        args: ['wget --no-check-certificate https://github.com/camunda-community-hub/zeebe-hazelcast-exporter/releases/download/1.2.1/zeebe-hazelcast-exporter-1.2.1-jar-with-dependencies.jar -O /exporters/zeebe-hazelcast-exporter.jar; ls -al /exporters']
+        volumeMounts:
+        - name: exporters
+          mountPath: /exporters/
+    env:
+      - name: ZEEBE_BROKER_EXPORTERS_HAZELCAST_JARPATH
+        value: /exporters/zeebe-hazelcast-exporter.jar
+      - name: ZEEBE_BROKER_EXPORTERS_HAZELCAST_CLASSNAME
+        value: io.zeebe.hazelcast.exporter.HazelcastExporter
+      - name: ZEEBE_HAZELCAST_REMOTE_ADDRESS
+        value: "zeebe-platform-hazelcast:5701"
+
+  zeebe-gateway:
+    replicas: 1
+    service:
+      type: NodePort
+
+nats:
+  image: nats:2.7.4-alpine
+  pullPolicy: IfNotPresent
+  externalAccess: true
